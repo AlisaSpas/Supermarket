@@ -1,0 +1,26 @@
+public class Cart {
+    int productId;
+    int quantity;
+    double productPrice;
+
+    public void setProductId(int productId) {
+        this.productId = productId;
+    }
+    public int getProductId() {
+        return productId;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setProductPrice(double productPrice) {
+        this.productPrice = productPrice;
+    }
+    public double getProductPrice() {
+        return productPrice;
+    }
+}
