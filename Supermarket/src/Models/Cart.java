@@ -1,3 +1,5 @@
+package Models;
+
 public class Cart {
     int productId;
     int quantity;

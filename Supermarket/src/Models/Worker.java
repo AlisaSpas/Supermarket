@@ -1,9 +1,15 @@
-import java.util.ArrayList;
+package Models;
 
 public class Worker {
     String workerName;
     int workerId;
     double monthlySalary;
+
+    public Worker (String workerName, int workerId, double monthlySalary){
+        this.workerName = workerName;
+        this.workerId = workerId;
+        this.monthlySalary = monthlySalary;
+    }
 
     public void setWorkerName(String workerName) {
         this.workerName = workerName;

@@ -1,3 +1,5 @@
+package Models;
+
 import java.util.ArrayList;
 
 public class Store {
@@ -6,9 +8,20 @@ public class Store {
     double overpriceNonfood;
     int daysTillExpiration;
     double discount;
+    ArrayList<Product> products;
 
-    public void setWorkers(ArrayList<Worker> workers) {
-        this.workers = workers;
+    public Store (double overpriceFood, double overpriceNonfood,int daysTillExpiration, double discount){
+        this.overpriceFood = overpriceFood;
+        this.overpriceNonfood = overpriceNonfood;
+        this.daysTillExpiration = daysTillExpiration;
+        this.discount = discount;
+
+        this.workers = new ArrayList<>();
+        this.products = new ArrayList<>();
+    }
+
+    public void addWorkers(Worker worker) {
+        this.workers.add(worker);
     }
     public ArrayList<Worker> getWorkers() {
         return workers;
@@ -40,5 +53,12 @@ public class Store {
     }
     public double getDiscount() {
         return discount;
+    }
+
+    public void addProducts(Product product) {
+        this.products.add(product);
+    }
+    public ArrayList<Product> getProducts() {
+        return products;
     }
 }

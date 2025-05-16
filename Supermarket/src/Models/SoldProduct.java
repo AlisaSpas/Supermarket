@@ -1,3 +1,5 @@
+package Models;
+
 public class SoldProduct {
     String productName;
     int productId;

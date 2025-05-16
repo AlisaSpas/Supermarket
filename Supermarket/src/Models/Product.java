@@ -1,4 +1,5 @@
-import java.time.DateTimeException;
+package Models;
+
 import java.time.LocalDate;
 
 public class Product {
@@ -9,6 +10,15 @@ public class Product {
     LocalDate expirationDate;
     double productPrice;
 
+    public Product (int productId, String productName, double singleDeliveryFee,
+                    ProductCategory category, LocalDate expirationDate, double productPrice){
+        this.productId = productId;
+        this.productName = productName;
+        this.singleDeliveryFee = singleDeliveryFee;
+        this.category = category;
+        this.expirationDate = expirationDate;
+        this.productPrice = productPrice;
+    }
     public void setProductId(int productId) {
         this.productId = productId;
     }
