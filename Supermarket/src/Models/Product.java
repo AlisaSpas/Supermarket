@@ -54,8 +54,8 @@ public class Product {
         return expirationDate;
     }
 
-    public void setProductPrice(double productPrice, double percent) {
-        this.productPrice = productPrice + (productPrice * percent);
+    public void setProductPrice(double productPrice) {
+        this.productPrice = productPrice;
     }
     public double getProductPrice() {
         return productPrice;

@@ -1,10 +1,19 @@
 package Models;
 
+import java.util.ArrayList;
+
 public class SoldProduct {
     String productName;
     int productId;
     double productPrice;
     int quantity;
+
+    public SoldProduct(String productName, int productId, double productPrice, int quantity){
+        this.productName = productName;
+        this.productId = productId;
+        this.productPrice = productPrice;
+        this.quantity = quantity;
+    }
 
     public void setProductName(String productName) {
         this.productName = productName;
@@ -33,4 +42,5 @@ public class SoldProduct {
     public int getQuantity() {
         return quantity;
     }
+
 }

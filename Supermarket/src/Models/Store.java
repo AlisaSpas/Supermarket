@@ -9,6 +9,7 @@ public class Store {
     int daysTillExpiration;
     double discount;
     ArrayList<Product> products;
+    ArrayList<CashRegister> cashRegisters;
 
     public Store (double overpriceFood, double overpriceNonfood,int daysTillExpiration, double discount){
         this.overpriceFood = overpriceFood;
@@ -18,6 +19,7 @@ public class Store {
 
         this.workers = new ArrayList<>();
         this.products = new ArrayList<>();
+        this.cashRegisters = new ArrayList<>();
     }
 
     public void addWorkers(Worker worker) {
@@ -60,5 +62,12 @@ public class Store {
     }
     public ArrayList<Product> getProducts() {
         return products;
+    }
+
+    public void addCashRegisters(CashRegister cashRegister) {
+        this.cashRegisters.add(cashRegister);
+    }
+    public ArrayList<CashRegister> getCashRegisters(){
+        return cashRegisters;
     }
 }

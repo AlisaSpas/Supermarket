@@ -1,8 +1,6 @@
 package Service.Interface;
 
-import Models.Product;
-import Models.Store;
-import Models.Worker;
+import Models.*;
 
 public interface IStoreService {
     public Store createStore(double overpriceFood, double overpriceNonfood,
@@ -12,6 +10,9 @@ public interface IStoreService {
 
     public void addWorkers(Store store, Worker worker);
 
+    public void addCashRegisters(Store store, CashRegister cashRegister);
+
     public void printProducts(Store store);
     public void printWorkers(Store store);
+    public void printCart(Store store, Cart cart);
 }

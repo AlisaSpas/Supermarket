@@ -10,6 +10,13 @@ public class Receipt {
     ArrayList<SoldProduct> soldProducts;
     double total;
 
+    public Receipt(int receiptId, int workerId, LocalDateTime timeOfSale, double total, ArrayList<SoldProduct> products){
+        this.receiptId = receiptId;
+        this.workerId = workerId;
+        this.timeOfSale = timeOfSale;
+        this.total = total;
+        this.soldProducts = products;
+    }
     public void setReceiptId(int receiptId) {
         this.receiptId = receiptId;
     }

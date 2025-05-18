@@ -1,8 +1,6 @@
 package Service.Implementation;
 
-import Models.Product;
-import Models.Store;
-import Models.Worker;
+import Models.*;
 import Service.Interface.IStoreService;
 
 import java.util.ArrayList;
@@ -17,12 +15,26 @@ public class StoreService implements IStoreService {
 
     @Override
     public void addProducts(Store store, Product product) {
+        double overprice;
+        if(product.getCategory() == ProductCategory.FOOD){
+            overprice = store.getOverpriceFood();
+        }else{
+            overprice = store.getOverpriceNonfood();
+        }
+        double price = product.getProductPrice();
+        price += (price * overprice)/100;
+        product.setProductPrice(price);
         store.addProducts(product);
     }
 
     @Override
     public void addWorkers(Store store, Worker worker) {
         store.addWorkers(worker);
+    }
+
+    @Override
+    public void addCashRegisters(Store store, CashRegister cashRegister) {
+        store.addCashRegisters(cashRegister);
     }
 
     @Override
@@ -42,5 +54,30 @@ public class StoreService implements IStoreService {
             System.out.println("Worker name: "+worker.getWorkerName()+" with salary: "+worker.getMonthlySalary());
         }
 
+    }
+
+    @Override
+    public void printCart(Store store, Cart cart) {
+        ArrayList<CartItem> items = cart.getItems();
+        for(int i = 0; i < items.size(); i++){
+            CartItem item = items.get(i);
+            Product product = getProduct(store, item.getProductId());
+            if(product != null){
+                System.out.println("Product name: "+product.getProductName()+
+                        " product price: "+product.getProductPrice());
+            }
+
+        }
+    }
+
+    private Product getProduct(Store store,int idToBeFound){
+        ArrayList<Product> products = store.getProducts();
+        for(int i = 0; i < products.size(); i++){
+            Product product = products.get(i);
+            if(product.getProductId() == idToBeFound){
+                return product;
+            }
+        }
+        return null;
     }
 }

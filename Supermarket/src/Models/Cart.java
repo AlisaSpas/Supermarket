@@ -1,28 +1,31 @@
 package Models;
 
+import java.util.ArrayList;
+
 public class Cart {
-    int productId;
-    int quantity;
-    double productPrice;
+    int cartId;
+    ArrayList<CartItem> items;
+    double customerMoney;
 
-    public void setProductId(int productId) {
-        this.productId = productId;
-    }
-    public int getProductId() {
-        return productId;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
-    public int getQuantity() {
-        return quantity;
+    public Cart(int cartId, double customerMoney){
+        this.cartId = cartId;
+        this.customerMoney = customerMoney;
+        this.items = new ArrayList<>();
     }
 
-    public void setProductPrice(double productPrice) {
-        this.productPrice = productPrice;
+    public void setCartId(int cartId) {
+        this.cartId = cartId;
     }
-    public double getProductPrice() {
-        return productPrice;
+    public int getCartId() {
+        return cartId;
     }
+
+    public void addItems(CartItem cartItem) {
+        this.items.add(cartItem);
+    }
+    public ArrayList<CartItem> getItems() {
+        return items;
+    }
+
+
 }
