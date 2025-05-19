@@ -1,0 +1,5 @@
+Receipt id:1
+Worker id: 1
+Product name: Sugar ,quantity: 4 ,price: 12.0
+Total: 48.0
+Time of sale: 2025-05-19T21:43:42.984517

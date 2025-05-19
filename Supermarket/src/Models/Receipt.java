@@ -1,9 +1,10 @@
 package Models;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
-public class Receipt {
+public class Receipt implements Serializable {
     int receiptId;
     int workerId;
     LocalDateTime timeOfSale;

@@ -2,11 +2,13 @@ import Models.*;
 import Service.Implementation.*;
 import Service.Interface.*;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
         IWorkerService workerService = new WorkerService();
         IStoreService storeService = new StoreService();
@@ -44,7 +46,13 @@ public class Main {
 
         Receipt receipt1 = cashRegisterService.checkoutCustomer(1, LocalDateTime.now(),cart1,store,register1);
         IReceiptService receiptService = new ReceiptService();
-        receiptService.printReceipt(receipt1);
-        //TODO all validations. save receipts in txt files. Subtract quantity of products when sold. Create all reports for stores.
+        //receiptService.printReceipt(receipt1);
+        //TODO all validations. Subtract quantity of products when sold. Create all reports for stores.
+
+        SerializationService serializationService = new SerializationService();
+        serializationService.serialization(receipt1);
+        receiptService.printReceipt(serializationService.deserialization(receipt1.getReceiptId()));
+        ITxtService txtService = new TxtService();
+        txtService.writeTxtFile(receipt1);
     }
 }
