@@ -4,6 +4,7 @@ import Models.*;
 import Service.Interface.IStoreService;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 public class StoreService implements IStoreService {
 
@@ -48,12 +49,9 @@ public class StoreService implements IStoreService {
 
     @Override
     public void printWorkers(Store store) {
-        ArrayList<Worker> workers = store.getWorkers();
-        for (int i = 0; i < workers.size(); i++) {
-            Worker worker = workers.get(i);
-            System.out.println("Worker name: "+worker.getWorkerName()+" with salary: "+worker.getMonthlySalary());
-        }
-
+        Set<Worker> workers = store.getWorkers();
+        workers.stream().forEach(worker -> System.out.println("Worker name: "+worker.getWorkerName()+" with salary: "+
+              worker.getMonthlySalary()));
     }
 
     @Override

@@ -6,6 +6,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class Main {
     public static void main(String[] args) throws IOException {
@@ -26,6 +29,7 @@ public class Main {
         ICashRegisterService cashRegisterService = new CashRegisterService();
         CashRegister register1 = cashRegisterService.createCashRegister(1);
         register1.setWorkerId(worker1.getWorkerId());
+        worker1.setCashRegisterId(register1.getNumber());
 
         storeService.addWorkers(store, worker1);
         storeService.addWorkers(store, worker2);
@@ -44,15 +48,28 @@ public class Main {
         cart1.addItems(item1);
         storeService.printCart(store,cart1);
 
-        Receipt receipt1 = cashRegisterService.checkoutCustomer(1, LocalDateTime.now(),cart1,store,register1);
+        cashRegisterService.addCustomersToQueue(cart1,register1);
+
         IReceiptService receiptService = new ReceiptService();
+        SerializationService serializationService = new SerializationService();
+        ITxtService txtService = new TxtService();
+
+        ArrayList<Receipt> receipts = cashRegisterService.checkoutCustomers(LocalDateTime.now(),
+                register1.getCustomers(), store,register1);
+        for (int i = 0; i < receipts.size(); i++) {
+            serializationService.serialization(receipts.get(i));
+            receiptService.printReceipt(serializationService.deserialization(receipts.get(i).getReceiptId()));
+            txtService.writeTxtFile(receipts.get(i));
+        }
+        //Receipt receipt1 = cashRegisterService.checkoutCustomers(1, LocalDateTime.now(),cart1,store,register1);
+        //IReceiptService receiptService = new ReceiptService();
         //receiptService.printReceipt(receipt1);
         //TODO all validations. Subtract quantity of products when sold. Create all reports for stores.
 
-        SerializationService serializationService = new SerializationService();
-        serializationService.serialization(receipt1);
-        receiptService.printReceipt(serializationService.deserialization(receipt1.getReceiptId()));
-        ITxtService txtService = new TxtService();
-        txtService.writeTxtFile(receipt1);
+//        SerializationService serializationService = new SerializationService();
+//        serializationService.serialization(receipt1);
+//        receiptService.printReceipt(serializationService.deserialization(receipt1.getReceiptId()));
+//        ITxtService txtService = new TxtService();
+//        txtService.writeTxtFile(receipt1);
     }
 }

@@ -4,6 +4,7 @@ public class Worker {
     String workerName;
     int workerId;
     double monthlySalary;
+    int cashRegisterId;
 
     public Worker (String workerName, int workerId, double monthlySalary){
         this.workerName = workerName;
@@ -30,5 +31,12 @@ public class Worker {
     }
     public double getMonthlySalary() {
         return monthlySalary;
+    }
+
+    public void setCashRegisterId(int cashRegisterId) {
+        this.cashRegisterId = cashRegisterId;
+    }
+    public int getCashRegisterId() {
+        return cashRegisterId;
     }
 }

@@ -1,9 +1,11 @@
 package Models;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Store {
-    ArrayList<Worker> workers;
+    Set<Worker> workers;
     double overpriceFood;
     double overpriceNonfood;
     int daysTillExpiration;
@@ -17,7 +19,7 @@ public class Store {
         this.daysTillExpiration = daysTillExpiration;
         this.discount = discount;
 
-        this.workers = new ArrayList<>();
+        this.workers = new HashSet<>();
         this.products = new ArrayList<>();
         this.cashRegisters = new ArrayList<>();
     }
@@ -25,7 +27,7 @@ public class Store {
     public void addWorkers(Worker worker) {
         this.workers.add(worker);
     }
-    public ArrayList<Worker> getWorkers() {
+    public Set<Worker> getWorkers() {
         return workers;
     }
 

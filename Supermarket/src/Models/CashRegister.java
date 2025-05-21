@@ -1,11 +1,16 @@
 package Models;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
 public class CashRegister {
     int workerId;
     int number;
+    Queue<Cart> customers;
 
     public CashRegister(int number){
         this.number = number;
+        this.customers = new LinkedList<>();
     }
 
     public void setWorkerId(int workerId) {
@@ -20,5 +25,15 @@ public class CashRegister {
     }
     public int getNumber() {
         return number;
+    }
+
+    public void addCustomers(Cart cart) {
+        this.customers.add(cart);
+    }
+    public Queue<Cart> getCustomers() {
+        return customers;
+    }
+    public void pollCustomer(){
+        this.customers.poll();
     }
 }

@@ -7,8 +7,12 @@ import Models.Store;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Queue;
 
 public interface ICashRegisterService {
     public CashRegister createCashRegister(int number);
-    public Receipt checkoutCustomer(int receiptId, LocalDateTime timeOfSale, Cart cart, Store store, CashRegister cashRegister);
+    public ArrayList<Receipt> checkoutCustomers(LocalDateTime timeOfSale, Queue<Cart> customers,
+                                              Store store, CashRegister cashRegister);
+    public void addCustomersToQueue(Cart cart, CashRegister cashRegister);
 }
