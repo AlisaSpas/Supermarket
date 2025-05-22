@@ -7,6 +7,7 @@ import java.time.LocalDate;
 
 public interface IProductService {
     public Product createProduct(int productId, String productName, double singleDeliveryFee,
-                                 ProductCategory category, LocalDate expirationDate, double productPrice);
+                                 ProductCategory category, LocalDate expirationDate,
+                                 double productPrice, double quantity);
 
 }
