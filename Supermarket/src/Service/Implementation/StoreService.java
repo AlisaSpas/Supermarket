@@ -107,7 +107,7 @@ public class StoreService implements IStoreService {
                 .sum();
         sb.append(productPrices).append("\n");
         sb.append("Transport expenses: ");
-        double productTransport = store.getProducts().stream().mapToDouble(Product::getSingleDeliveryFee).sum();
+        double productTransport = store.getProducts().stream().mapToDouble(p -> p.getSingleDeliveryFee() * p.getOriginalQuantity()).sum();
         sb.append(productTransport).append("\nProducts + Transport: ").append(productTransport + productPrices).append("\nIncome: ");
         double income = GetStoreIncome(store);
         sb.append(income).append("\nFinal profit: ").append(income - productTransport - productPrices - workerSalaries);
