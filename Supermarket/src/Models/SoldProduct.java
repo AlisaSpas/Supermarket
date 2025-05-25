@@ -37,7 +37,7 @@ public class SoldProduct implements Serializable {
         return productPrice;
     }
 
-    public void setQuantity(int quantity) {
+    public void setQuantity(double quantity) {
         this.quantity = quantity;
     }
     public double getQuantity() {
