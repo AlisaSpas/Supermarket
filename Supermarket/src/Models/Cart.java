@@ -13,6 +13,14 @@ public class Cart {
         this.items = new ArrayList<>();
     }
 
+    public double getCustomerMoney() {
+        return customerMoney;
+    }
+
+    public void setCustomerMoney(double customerMoney) {
+        this.customerMoney = customerMoney;
+    }
+
     public void setCartId(int cartId) {
         this.cartId = cartId;
     }

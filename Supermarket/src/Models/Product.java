@@ -10,6 +10,7 @@ public class Product {
     LocalDate expirationDate;
     double productPrice;
     double quantity;
+    double originalQuantity;
 
     public Product (int productId, String productName, double singleDeliveryFee,
                     ProductCategory category, LocalDate expirationDate, double productPrice, double quantity){
@@ -20,7 +21,17 @@ public class Product {
         this.expirationDate = expirationDate;
         this.productPrice = productPrice;
         this.quantity = quantity;
+        this.originalQuantity = quantity;
     }
+
+    public double getOriginalQuantity() {
+        return originalQuantity;
+    }
+
+    public void setOriginalQuantity(double originalQuantity) {
+        this.originalQuantity = originalQuantity;
+    }
+
     public void setProductId(int productId) {
         this.productId = productId;
     }

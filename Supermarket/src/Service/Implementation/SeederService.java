@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class SeederService implements ISeederService {
     @Override
     public ArrayList<Store> seedStores() {
-        IStoreService storeService = new StoreService();
+        IStoreService storeService = new StoreService(new SerializationService());
         Store store1 = storeService.createStore(1,15, 10,14, 25);
         Store store2 = storeService.createStore(2,7, 12, 10, 30);
         Store store3 = storeService.createStore(3,15,9,7,45);

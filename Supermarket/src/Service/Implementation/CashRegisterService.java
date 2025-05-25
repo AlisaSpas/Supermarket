@@ -1,14 +1,13 @@
 package Service.Implementation;
 
 import Exceptions.NoWorkerException;
-import Exceptions.NotEnoughQuantity;
 import Models.*;
 import Service.Interface.ICashRegisterService;
 
 import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Period;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Queue;
 import java.util.Set;
@@ -37,7 +36,8 @@ public class CashRegisterService implements ICashRegisterService {
             receiptId = 1;
         }
         while (!customers.isEmpty()) {
-            ArrayList<CartItem> items = customers.poll().getItems();
+            Cart cart = customers.poll();
+            ArrayList<CartItem> items = cart.getItems();
             ArrayList<SoldProduct> soldProducts = new ArrayList<>();
             double total = 0;
             for (int i = 0; i < items.size(); i++) {
@@ -52,12 +52,10 @@ public class CashRegisterService implements ICashRegisterService {
                 if (LocalDate.now().isAfter(product.getExpirationDate())) {
                     System.out.println("Product " + product.getProductName() + "(Id: " + product.getProductId() + ") is expired. Expiration date: " + product.getExpirationDate());
                 } else {
-                    product.setQuantity(product.getQuantity() - item.getQuantity());
-
-                    Period period = Period.between(product.getExpirationDate(), LocalDate.now());
+                    long daysBetween = ChronoUnit.DAYS.between(LocalDate.now(), product.getExpirationDate());
                     double price = product.getProductPrice();
-                    if (period.getDays() <= store.getDaysTillExpiration()) {
-                        price = price - price * store.getDiscount();
+                    if (daysBetween <= store.getDaysTillExpiration()) {
+                        price = price - price * (store.getDiscount() / 100);
                     }
 
                     SoldProduct soldProduct = new SoldProduct(product.getProductName(), item.getProductId(),
@@ -66,11 +64,26 @@ public class CashRegisterService implements ICashRegisterService {
                 }
             }
 
-            Receipt receipt = new Receipt(receiptId, workerId, timeOfSale, total, soldProducts, store.getId());
-            receipts.add(receipt);
-            receiptId++;
+            if (cart.getCustomerMoney() < total) {
+                System.out.println("Cart Id: " + cart.getCartId() + "has insufficient funds!");
+                ReturnProducts(store, soldProducts);
+            } else {
+                Receipt receipt = new Receipt(receiptId, workerId, timeOfSale, total, soldProducts, store.getId());
+                receipts.add(receipt);
+                receiptId++;
+            }
         }
         return receipts;
+    }
+
+    private void ReturnProducts(Store store, ArrayList<SoldProduct> cart) {
+        for (int i = 0; i < cart.size(); i++) {
+            SoldProduct product = cart.get(i);
+            Product storeProduct = store.getProducts().stream().filter(p -> p.getProductId() == product.getProductId()).findFirst().orElse(null);
+            if (storeProduct != null) {
+                storeProduct.setQuantity(storeProduct.getQuantity() + product.getQuantity());
+            }
+        }
     }
 
     private int getReceiptId(int id) {

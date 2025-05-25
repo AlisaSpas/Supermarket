@@ -23,8 +23,8 @@ public class SerializationService implements ISerializationService {
     }
 
     @Override
-    public Receipt deserialization(Receipt receiptFrom) {
-      File file = new File("./receipts/"+receiptFrom.getStoreId()+"_"+receiptFrom.getReceiptId()+".ser");
+    public Receipt deserialization(String name) {
+      File file = new File("./receipts/"+name+".ser");
       Receipt receipt = null;
       if(file.exists()){
           try(FileInputStream stream = new FileInputStream(file);

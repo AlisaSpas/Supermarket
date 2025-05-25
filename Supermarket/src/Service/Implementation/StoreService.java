@@ -1,12 +1,21 @@
 package Service.Implementation;
 
 import Models.*;
+import Service.Interface.ISerializationService;
 import Service.Interface.IStoreService;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class StoreService implements IStoreService {
+
+    private ISerializationService serializationService;
+    public StoreService(ISerializationService serializationService) {
+        this.serializationService = serializationService;
+    }
 
     @Override
     public Store createStore(int id,double overpriceFood, double overpriceNonfood, int daysTillExpiration, double discount) {
@@ -78,6 +87,47 @@ public class StoreService implements IStoreService {
                System.out.println("Cash register number: "+ register.getNumber());
             }
         }
+    }
+
+    @Override
+    public String getReport(Store store) {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("- Store Id: ").append(store.getId()).append("'\n");
+
+        sb.append("Salaries: ");
+        double workerSalaries = store.getWorkers().stream().mapToDouble(Worker::getMonthlySalary).sum();
+        sb.append(workerSalaries).append("\n");
+        sb.append("Delivered products sum: ");
+        double productPrices = store.getProducts().stream()
+                .mapToDouble(p-> (p.getProductPrice() /
+                                        (1 + (p.getCategory() == ProductCategory.FOOD ?
+                                                                store.getOverpriceFood() :
+                                                                store.getOverpriceNonfood()) / 100)) * p.getOriginalQuantity())
+                .sum();
+        sb.append(productPrices).append("\n");
+        sb.append("Transport expenses: ");
+        double productTransport = store.getProducts().stream().mapToDouble(Product::getSingleDeliveryFee).sum();
+        sb.append(productTransport).append("\nProducts + Transport: ").append(productTransport + productPrices).append("\nIncome: ");
+        double income = GetStoreIncome(store);
+        sb.append(income).append("\nFinal profit: ").append(income - productTransport - productPrices - workerSalaries);
+        return sb.toString();
+    }
+
+    private double GetStoreIncome(Store store) {
+        double income = 0;
+
+        String path = "./receipts/";
+
+        Set<String> allReceipts = Stream.of(new File(path).listFiles())
+                .filter(file -> !file.isDirectory())
+                .map(File::getName)
+                .collect(Collectors.toSet());
+
+        income = allReceipts.stream().map(receipt -> serializationService.deserialization(receipt.replace(".ser", "")))
+                            .mapToDouble(r -> r.getTotal()).sum();
+
+        return income;
     }
 
     private Product getProduct(Store store,int idToBeFound){

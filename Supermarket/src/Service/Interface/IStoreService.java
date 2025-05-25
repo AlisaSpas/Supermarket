@@ -16,4 +16,6 @@ public interface IStoreService {
     public void printWorkers(Store store);
     public void printCart(Store store, Cart cart);
     public void printCashRegisters(Store store);
+
+    public String getReport(Store store);
 }
