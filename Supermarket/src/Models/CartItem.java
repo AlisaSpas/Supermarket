@@ -2,10 +2,10 @@ package Models;
 
 public class CartItem {
     int productId;
-    int quantity;
+    double quantity;
     double productPrice;
 
-    public CartItem(int productId, int quantity, double productPrice){
+    public CartItem(int productId, double quantity, double productPrice){
         this.productId = productId;
         this.quantity = quantity;
         this.productPrice = productPrice;
@@ -21,7 +21,7 @@ public class CartItem {
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
-    public int getQuantity() {
+    public double getQuantity() {
         return quantity;
     }
 

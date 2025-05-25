@@ -10,14 +10,25 @@ public class Receipt implements Serializable {
     LocalDateTime timeOfSale;
     ArrayList<SoldProduct> soldProducts;
     double total;
+    int storeId;
 
-    public Receipt(int receiptId, int workerId, LocalDateTime timeOfSale, double total, ArrayList<SoldProduct> products){
+    public Receipt(int receiptId, int workerId, LocalDateTime timeOfSale, double total, ArrayList<SoldProduct> products, int storeId){
         this.receiptId = receiptId;
         this.workerId = workerId;
         this.timeOfSale = timeOfSale;
         this.total = total;
         this.soldProducts = products;
+        this.storeId = storeId;
     }
+
+    public int getStoreId() {
+        return storeId;
+    }
+
+    public void setStoreId(int storeId) {
+        this.storeId = storeId;
+    }
+
     public void setReceiptId(int receiptId) {
         this.receiptId = receiptId;
     }

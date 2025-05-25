@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class Store {
+    int id;
     Set<Worker> workers;
     double overpriceFood;
     double overpriceNonfood;
@@ -13,15 +14,24 @@ public class Store {
     ArrayList<Product> products;
     ArrayList<CashRegister> cashRegisters;
 
-    public Store (double overpriceFood, double overpriceNonfood,int daysTillExpiration, double discount){
+    public Store (int id,double overpriceFood, double overpriceNonfood,int daysTillExpiration, double discount){
         this.overpriceFood = overpriceFood;
         this.overpriceNonfood = overpriceNonfood;
         this.daysTillExpiration = daysTillExpiration;
         this.discount = discount;
+        this.id = id;
 
         this.workers = new HashSet<>();
         this.products = new ArrayList<>();
         this.cashRegisters = new ArrayList<>();
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public void addWorkers(Worker worker) {

@@ -7,9 +7,9 @@ public class SoldProduct implements Serializable {
     String productName;
     int productId;
     double productPrice;
-    int quantity;
+    double quantity;
 
-    public SoldProduct(String productName, int productId, double productPrice, int quantity){
+    public SoldProduct(String productName, int productId, double productPrice, double quantity){
         this.productName = productName;
         this.productId = productId;
         this.productPrice = productPrice;
@@ -40,7 +40,7 @@ public class SoldProduct implements Serializable {
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
-    public int getQuantity() {
+    public double getQuantity() {
         return quantity;
     }
 

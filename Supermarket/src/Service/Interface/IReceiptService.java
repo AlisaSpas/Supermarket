@@ -8,6 +8,6 @@ import java.util.ArrayList;
 
 public interface IReceiptService {
     public Receipt createReceipt(int receiptId, int workerId, LocalDateTime timeOfSale,
-                                 double total, ArrayList<SoldProduct> soldProducts);
+                                 double total, ArrayList<SoldProduct> soldProducts, int storeId);
     public void printReceipt(Receipt receipt);
 }

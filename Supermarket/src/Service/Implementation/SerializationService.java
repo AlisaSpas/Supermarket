@@ -8,7 +8,7 @@ import java.io.*;
 public class SerializationService implements ISerializationService {
     @Override
     public void serialization(Receipt receipt) throws FileNotFoundException {
-        String fileName = "./receipts/"+receipt.getReceiptId()+".ser";
+        String fileName = "./receipts/"+receipt.getStoreId()+"_"+receipt.getReceiptId()+".ser";
         File file = new File(fileName);
         File parent = file.getParentFile();
         if(parent != null && !parent.exists()){
@@ -23,8 +23,8 @@ public class SerializationService implements ISerializationService {
     }
 
     @Override
-    public Receipt deserialization(int receiptId) {
-      File file = new File("./receipts/"+receiptId+".ser");
+    public Receipt deserialization(Receipt receiptFrom) {
+      File file = new File("./receipts/"+receiptFrom.getStoreId()+"_"+receiptFrom.getReceiptId()+".ser");
       Receipt receipt = null;
       if(file.exists()){
           try(FileInputStream stream = new FileInputStream(file);

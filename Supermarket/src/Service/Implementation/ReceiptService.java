@@ -10,8 +10,8 @@ import java.util.ArrayList;
 public class ReceiptService implements IReceiptService {
     @Override
     public Receipt createReceipt(int receiptId, int workerId, LocalDateTime timeOfSale,
-                                 double total, ArrayList<SoldProduct> soldProducts) {
-        Receipt receipt = new Receipt(receiptId,workerId,timeOfSale,total,soldProducts);
+                                 double total, ArrayList<SoldProduct> soldProducts, int storeId) {
+        Receipt receipt = new Receipt(receiptId,workerId,timeOfSale,total,soldProducts, storeId);
         return receipt;
     }
 
@@ -22,10 +22,6 @@ public class ReceiptService implements IReceiptService {
         ArrayList<SoldProduct> soldProducts = receipt.getSoldProducts();
         for (int i = 0; i < soldProducts.size(); i++) {
             SoldProduct product = soldProducts.get(i);
-            //TODO
-            if(product == null){
-                continue;
-            }
             System.out.println("Product name: "+product.getProductName()+" ,quantity: "+
                     product.getQuantity()+" ,price: "+product.getProductPrice());
         }

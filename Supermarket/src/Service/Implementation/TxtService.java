@@ -13,7 +13,7 @@ import java.util.ArrayList;
 public class TxtService implements ITxtService {
     @Override
     public void writeTxtFile(Receipt receipt) throws IOException {
-        String fileName = "./receiptsTxt/"+receipt.getReceiptId()+".txt";
+        String fileName = "./receiptsTxt/"+receipt.getStoreId()+"_"+receipt.getReceiptId()+".txt";
         File file = new File(fileName);
         File parent = file.getParentFile();
         if(parent != null && !parent.exists()){

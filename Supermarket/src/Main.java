@@ -1,75 +1,344 @@
+import Exceptions.NoProductExeption;
+import Exceptions.NoWorkerException;
+import Exceptions.NotEnoughQuantity;
 import Models.*;
 import Service.Implementation.*;
 import Service.Interface.*;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args) throws IOException {
+    static Scanner scanner;
+    static ArrayList<Store> stores;
+    static IStoreService storeService;
+    static IWorkerService workerService;
+    static IProductService productService;
+    static ICashRegisterService cashRegisterService;
+    static ICartService cartService;
+    static ISerializationService serializationService;
+    static IReceiptService receiptService;
+    static ITxtService txtService;
 
-        IWorkerService workerService = new WorkerService();
-        IStoreService storeService = new StoreService();
-        Store store = storeService.createStore(12,15,24,22);
+    public static void menu() {
+        System.out.println("1.Create a store: ");
+        System.out.println("2.Create an employee: ");
+        System.out.println("3.Create a product: ");
+        System.out.println("4.Create cash register: ");
+        System.out.println("5.Set worker to cash register: ");
+        System.out.println("6.Remove worker from cash register: ");
+        System.out.println("7.Shop at a store: ");
+        System.out.println("8.Checkout clients: ");
+        System.out.println("9.Store report: ");
+        System.out.println("0.Exit: ");
+    }
 
-        IProductService productService = new ProductService();
-        Product product1 = productService.createProduct(1,"Sugar",12.80,
-                ProductCategory.FOOD, LocalDate.now().plusMonths(6),3);
-        Product product2 = productService.createProduct(2,"Chair", 4,
-                ProductCategory.NONFOOD, LocalDate.now().plusMonths(7),17);
-
-        Worker worker1 = workerService.createWorker("Ivan Ivanov", 1, 1000);
-        Worker worker2 = workerService.createWorker("Stanislav Georgiev", 2, 980);
-
-        ICashRegisterService cashRegisterService = new CashRegisterService();
-        CashRegister register1 = cashRegisterService.createCashRegister(1);
-        register1.setWorkerId(worker1.getWorkerId());
-        worker1.setCashRegisterId(register1.getNumber());
-
-        storeService.addWorkers(store, worker1);
-        storeService.addWorkers(store, worker2);
-        storeService.addProducts(store, product1);
-        storeService.addProducts(store, product2);
-        storeService.addCashRegisters(store,register1);
-
-        storeService.printProducts(store);
-        storeService.printWorkers(store);
-
-        double customerMoney = 100;
-
-        Cart cart1 = new Cart(1,customerMoney);
-        CartItem item1 = new CartItem(1,4,12);
-
-        cart1.addItems(item1);
-        storeService.printCart(store,cart1);
-
-        cashRegisterService.addCustomersToQueue(cart1,register1);
-
-        IReceiptService receiptService = new ReceiptService();
-        SerializationService serializationService = new SerializationService();
-        ITxtService txtService = new TxtService();
-
-        ArrayList<Receipt> receipts = cashRegisterService.checkoutCustomers(LocalDateTime.now(),
-                register1.getCustomers(), store,register1);
-        for (int i = 0; i < receipts.size(); i++) {
-            serializationService.serialization(receipts.get(i));
-            receiptService.printReceipt(serializationService.deserialization(receipts.get(i).getReceiptId()));
-            txtService.writeTxtFile(receipts.get(i));
+    public static void options(int choice) throws IOException, NoWorkerException {
+        switch (choice) {
+            case 1:
+                createStore();
+                break;
+            case 2:
+                createEmployee();
+                break;
+            case 3:
+                createProduct();
+                break;
+            case 4:
+                createCashRegister();
+                break;
+            case 5:
+                setWorkerToCashRegister();
+                break;
+            case 6:
+                removeWorkerFromCashRegister();
+                break;
+            case 7:
+                shopAtStore();
+                break;
+            case 8:
+                checkoutCustomers();
+                break;
+            case 0:
+                break;
+            default:
+                System.out.println("Invalid option!");
         }
-        //Receipt receipt1 = cashRegisterService.checkoutCustomers(1, LocalDateTime.now(),cart1,store,register1);
-        //IReceiptService receiptService = new ReceiptService();
-        //receiptService.printReceipt(receipt1);
-        //TODO all validations. Subtract quantity of products when sold. Create all reports for stores.
+    }
 
+    private static void removeWorkerFromCashRegister() {
+        printStores();
+        int storeId = Integer.parseInt(scanner.nextLine());
+        Store store = getStore(storeId);
+
+        System.out.println("Get worker id: ");
+        storeService.printWorkers(store);
+        int workerId = Integer.parseInt(scanner.nextLine());
+
+        System.out.println("Get cash register number: ");
+        storeService.printCashRegisters(store);
+        int cashRegisterNum = Integer.parseInt(scanner.nextLine());
+
+        cashRegisterService.removeWorkerFromCashRegister(workerId, cashRegisterNum, store);
+    }
+
+    private static void setWorkerToCashRegister() {
+        printStores();
+        int storeId = Integer.parseInt(scanner.nextLine());
+        Store store = getStore(storeId);
+
+        System.out.println("Get worker id: ");
+        storeService.printWorkers(store);
+        int workerId = Integer.parseInt(scanner.nextLine());
+
+        System.out.println("Get cash register number: ");
+        storeService.printCashRegisters(store);
+        int cashRegisterNum = Integer.parseInt(scanner.nextLine());
+
+        cashRegisterService.setWorkerToCashRegister(workerId, cashRegisterNum, store);
+    }
+
+    private static void printStores() {
+        System.out.println("Choose store by id: ");
+        for (int i = 0; i < stores.size(); i++) {
+            Store store = stores.get(i);
+            System.out.println("id: " + store.getId());
+        }
+    }
+
+    public static void checkoutCustomers() throws IOException {
+        System.out.println("Checkout customers: ");
+        printStores();
+        int storeId = Integer.parseInt(scanner.nextLine());
+        Store store = getStore(storeId);
+        try {
+            if (store != null) {
+                System.out.println("Choose a cash register by number: ");
+                storeService.printCashRegisters(store);
+                int registerNum = Integer.parseInt(scanner.nextLine());
+                CashRegister register = store.getCashRegisters().stream().
+                        filter(r -> r.getNumber() == registerNum).findFirst().orElse(null);
+                if (register != null) {
+                    ArrayList<Receipt> receipts = cashRegisterService.checkoutCustomers(LocalDateTime.now(),
+                            register.getCustomers(), store, register);
+                    if (receipts != null) {
+                        System.out.println("Receipts: ");
+                        for (int i = 0; i < receipts.size(); i++) {
+                            serializationService.serialization(receipts.get(i));
+                            txtService.writeTxtFile(receipts.get(i));
+                            receiptService.printReceipt(serializationService.deserialization(receipts.get(i)));
+                            System.out.println();
+                        }
+                    }
+
+                }
+            } else {
+                System.out.println("Store not found with id: " + storeId);
+            }
+        } catch (NoWorkerException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+public static void shopAtStore() {
+    System.out.println("Shop at store: ");
+    printStores();
+    int storeId = Integer.parseInt(scanner.nextLine());
+    Store store = getStore(storeId);
+
+    if (store != null) {
+        System.out.println("Write cart id: ");
+        int cartId = Integer.parseInt(scanner.nextLine());
+        System.out.println("Write customer money: ");
+        double customerMoney = Double.parseDouble(scanner.nextLine());
+        Cart cart = new Cart(cartId, customerMoney);
+        System.out.println("All products at store: ");
+        storeService.printProducts(store);
+        System.out.println("Choose product by id(0 to end): ");
+        int productId = Integer.parseInt(scanner.nextLine());
+        while (productId != 0) {
+            System.out.println("Choose quantity: ");
+            double quantity = Double.parseDouble(scanner.nextLine());
+            try{
+            handleCartProduct(productId, store, quantity);
+            }catch (Exception e) {
+                System.out.println("Error: " + e.getMessage());
+                continue;
+            }
+            CartItem item = cartService.createCartItem(store, productId, quantity);
+            cart.addItems(item);
+            System.out.println("Choose product by id(0 to end): ");
+            productId = Integer.parseInt(scanner.nextLine());
+        }
+        System.out.println("Choose a cash register by number: ");
+        storeService.printCashRegisters(store);
+        int registerNum = Integer.parseInt(scanner.nextLine());
+        cashRegisterService.addCustomersToQueue(cart,
+                store.getCashRegisters().stream().filter(r -> r.getNumber() == registerNum)
+                        .findFirst().orElse(null));
+
+    } else {
+        System.out.println("Store not found with id: " + storeId);
+    }
+}
+
+    private static void handleCartProduct(int productId, Store store, double quantity) throws NoProductExeption, NotEnoughQuantity {
+        Product product = store.getProducts().stream()
+                .filter(p -> p.getProductId() == productId)
+                .findFirst().orElse(null);
+
+        if(product == null) {
+            throw new NoProductExeption(productId);
+        }else if(product.getQuantity() < quantity){
+            throw new NotEnoughQuantity(productId, product.getProductName(), product.getQuantity());
+        }else{
+            product.setQuantity(product.getQuantity() - quantity);
+        }
+    }
+
+    public static void createCashRegister() {
+    System.out.println("Create cash register: ");
+    printStores();
+    int storeId = Integer.parseInt(scanner.nextLine());
+    Store store = getStore(storeId);
+
+    if (store != null) {
+        System.out.println("Write register number: ");
+        int registerNum = Integer.parseInt(scanner.nextLine());
+        CashRegister cashRegister = cashRegisterService.createCashRegister(registerNum);
+        storeService.addCashRegisters(store, cashRegister);
+    } else {
+        System.out.println("Store not found with id: " + storeId);
+    }
+}
+
+public static void createProduct() {
+    System.out.println("Create product: ");
+    printStores();
+    int storeId = Integer.parseInt(scanner.nextLine());
+    Store store = getStore(storeId);
+
+    if (store != null) {
+        System.out.println("Write product id: ");
+        int productId = Integer.parseInt(scanner.nextLine());
+        System.out.println("Write product name: ");
+        String productName = scanner.nextLine();
+        System.out.println("Write product category(food/nonfood: ");
+        String prodCategory = scanner.nextLine();
+        ProductCategory productCategory;
+        if (prodCategory.equalsIgnoreCase("food")) {
+            productCategory = ProductCategory.FOOD;
+        } else if (prodCategory.equalsIgnoreCase("nonfood")) {
+            productCategory = ProductCategory.NONFOOD;
+        } else {
+            System.out.println("Invalid product category!");
+            return;
+        }
+        System.out.println("Write single delivery fee: ");
+        double singleDeliveryFee = Double.parseDouble(scanner.nextLine());
+        System.out.println("Write months till expiry: ");
+        int monthsTillExpire = Integer.parseInt(scanner.nextLine());
+        System.out.println("Write product price: ");
+        double productPrice = Double.parseDouble(scanner.nextLine());
+        System.out.println("Write product quantity: ");
+        double quantity = Double.parseDouble(scanner.nextLine());
+        Product product = productService.createProduct(productId, productName, singleDeliveryFee,
+                productCategory, LocalDate.now().plusMonths(monthsTillExpire), productPrice, quantity);
+        storeService.addProducts(store, product);
+    } else {
+        System.out.println("Store not found with id: " + storeId);
+    }
+}
+
+public static void createEmployee() {
+    System.out.println("Create employee:");
+    printStores();
+    int storeId = Integer.parseInt(scanner.nextLine());
+    Store store = getStore(storeId);
+
+    if (store != null) {
+        System.out.println("Write worker id: ");
+        int workerId = Integer.parseInt(scanner.nextLine());
+        System.out.println("Write worker name: ");
+        String workerName = scanner.nextLine();
+        System.out.println("Write worker monthly salary: ");
+        double workerSalary = Double.parseDouble(scanner.nextLine());
+        Worker worker = workerService.createWorker(workerName, workerId, workerSalary);
+        storeService.addWorkers(store, worker);
+    } else {
+        System.out.println("Store not found with id: " + storeId);
+    }
+}
+
+public static void createStore() {
+    System.out.println("Create a store: ");
+    System.out.println("Store id: ");
+    int id = Integer.parseInt(scanner.nextLine());
+    System.out.println("Select a percent to overprice the food items: ");
+    double overpriceFood = Double.parseDouble(scanner.nextLine());
+    System.out.println("Select a percent to overprice the nonfood items: ");
+    double overpriceNonFood = Double.parseDouble(scanner.nextLine());
+    System.out.println("Select a number of days that an item is discounted before expiry: ");
+    int daysForDiscountForSoonToExpire = Integer.parseInt(scanner.nextLine());
+    System.out.println("Select the percent of the discount: ");
+    double discount = Double.parseDouble(scanner.nextLine());
+    Store newStore = storeService.createStore(id, overpriceFood, overpriceNonFood, daysForDiscountForSoonToExpire, discount);
+    stores.add(newStore);
+}
+
+private static void initialize() {
+    scanner = new Scanner(System.in);
+
+    workerService = new WorkerService();
+    storeService = new StoreService();
+    workerService = new WorkerService();
+    productService = new ProductService();
+    cashRegisterService = new CashRegisterService();
+    cartService = new CartService();
+    serializationService = new SerializationService();
+    receiptService = new ReceiptService();
+    txtService = new TxtService();
+
+    ISeederService seederService = new SeederService();
+    stores = seederService.seedStores();
+}
+
+private static Store getStore(int id) {
+    return stores.stream().filter(s -> s.getId() == id).findFirst().orElse(null);
+}
+
+public static void main(String[] args) throws IOException, NoWorkerException {
+    initialize();
+
+    int choice = 99999;
+    while (choice != 0) {
+        menu();
+        choice = Integer.parseInt(scanner.nextLine());
+        options(choice);
+    }
+
+
+//        IReceiptService receiptService = new ReceiptService();
+//        SerializationService serializationService = new SerializationService();
+//        ITxtService txtService = new TxtService();
+//
+//        ArrayList<Receipt> receipts = cashRegisterService.checkoutCustomers(LocalDateTime.now(),
+//                register1.getCustomers(), store,register1);
+//        for (int i = 0; i < receipts.size(); i++) {
+//            serializationService.serialization(receipts.get(i));
+//            receiptService.printReceipt(serializationService.deserialization(receipts.get(i).getReceiptId()));
+//            txtService.writeTxtFile(receipts.get(i));
+//        }
+    //Receipt receipt1 = cashRegisterService.checkoutCustomers(1, LocalDateTime.now(),cart1,store,register1);
+    //IReceiptService receiptService = new ReceiptService();
+    //receiptService.printReceipt(receipt1);
 //        SerializationService serializationService = new SerializationService();
 //        serializationService.serialization(receipt1);
 //        receiptService.printReceipt(serializationService.deserialization(receipt1.getReceiptId()));
 //        ITxtService txtService = new TxtService();
 //        txtService.writeTxtFile(receipt1);
-    }
+}
 }

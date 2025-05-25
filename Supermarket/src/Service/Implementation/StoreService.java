@@ -9,8 +9,8 @@ import java.util.Set;
 public class StoreService implements IStoreService {
 
     @Override
-    public Store createStore(double overpriceFood, double overpriceNonfood, int daysTillExpiration, double discount) {
-        Store store = new Store(overpriceFood,overpriceNonfood,daysTillExpiration,discount);
+    public Store createStore(int id,double overpriceFood, double overpriceNonfood, int daysTillExpiration, double discount) {
+        Store store = new Store(id,overpriceFood,overpriceNonfood,daysTillExpiration,discount);
         return store;
     }
 
@@ -43,14 +43,15 @@ public class StoreService implements IStoreService {
         ArrayList<Product> products = store.getProducts();
         for(int i = 0; i < products.size(); i++){
             Product product = products.get(i);
-            System.out.println("Product name: "+product.getProductName()+" , price: "+product.getProductPrice());
+            System.out.println("Product name: "+product.getProductName()+", product id: "+ product.getProductId()+
+                    " , price: "+product.getProductPrice() + ", quantity: " + product.getQuantity());
         }
     }
 
     @Override
     public void printWorkers(Store store) {
         Set<Worker> workers = store.getWorkers();
-        workers.stream().forEach(worker -> System.out.println("Worker name: "+worker.getWorkerName()+" with salary: "+
+        workers.forEach(worker -> System.out.println("Id: "+ worker.getWorkerId() + " Worker name: "+worker.getWorkerName()+" with salary: "+
               worker.getMonthlySalary()));
     }
 
@@ -65,6 +66,17 @@ public class StoreService implements IStoreService {
                         " product price: "+product.getProductPrice());
             }
 
+        }
+    }
+
+    @Override
+    public void printCashRegisters(Store store) {
+        ArrayList<CashRegister> registers = store.getCashRegisters();
+        for(int i = 0; i < registers.size(); i++){
+            CashRegister register = registers.get(i);
+            if(register != null){
+               System.out.println("Cash register number: "+ register.getNumber());
+            }
         }
     }
 
