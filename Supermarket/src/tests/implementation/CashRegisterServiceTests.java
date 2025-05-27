@@ -38,7 +38,7 @@ public class CashRegisterServiceTests {
         storeService = new StoreService(serializationService);
 
         store = storeService.createStore(
-               1,
+                1,
                 0.0,
                 0.0,
                 10,
@@ -75,7 +75,7 @@ public class CashRegisterServiceTests {
     @Test
     void setWorkerToCashRegister_registerNotFound() {
         cashRegisterService.setWorkerToCashRegister(
-                worker.getWorkerId(), /*badRegister=*/999, store
+                worker.getWorkerId(), 999, store
         );
         assertEquals(
                 "Cash register with number: 999 does not exist!",
@@ -85,7 +85,7 @@ public class CashRegisterServiceTests {
 
     @Test
     void setWorkerToCashRegister_alreadyHasWorker() {
-        // pre‐assign a different worker to that register
+
         register.setWorkerId(777);
         cashRegisterService.setWorkerToCashRegister(
                 worker.getWorkerId(), register.getNumber(), store
@@ -99,17 +99,17 @@ public class CashRegisterServiceTests {
     @Test
     void setWorkerToCashRegister_workerNotFound() {
         cashRegisterService.setWorkerToCashRegister(
-                /*badWorker=*/888, register.getNumber(), store
+                888, register.getNumber(), store
         );
         assertEquals(
-                "Worker with Id: 888does not exist!",
+                "Worker with Id: 888 does not exist!",
                 outContent.toString().trim()
         );
     }
 
     @Test
     void setWorkerToCashRegister_workerAlreadyAssignedElsewhere() {
-        // pretend our worker is already on another register
+
         worker.setCashRegisterId(202);
         cashRegisterService.setWorkerToCashRegister(
                 worker.getWorkerId(), register.getNumber(), store
@@ -120,11 +120,11 @@ public class CashRegisterServiceTests {
         );
     }
 
-    //–– removeWorkerFromCashRegister ––//
+
 
     @Test
     void removeWorkerFromCashRegister_success() {
-        // first assign
+
         register.setWorkerId(worker.getWorkerId());
         worker.setCashRegisterId(register.getNumber());
 
@@ -140,7 +140,7 @@ public class CashRegisterServiceTests {
     @Test
     void removeWorkerFromCashRegister_registerNotFound() {
         cashRegisterService.removeWorkerFromCashRegister(
-                worker.getWorkerId(), /*badRegister=*/333, store
+                worker.getWorkerId(), 333, store
         );
         assertEquals(
                 "Cash register with number: 333 does not exist!",
@@ -150,7 +150,7 @@ public class CashRegisterServiceTests {
 
     @Test
     void removeWorkerFromCashRegister_noWorkerAssigned() {
-        // register.workerId is 0 by default
+
         cashRegisterService.removeWorkerFromCashRegister(
                 worker.getWorkerId(), register.getNumber(), store
         );
@@ -162,22 +162,22 @@ public class CashRegisterServiceTests {
 
     @Test
     void removeWorkerFromCashRegister_workerNotInStore() {
-        // give the register a worker‐id that doesn't match any in store
+
         register.setWorkerId(444);
         cashRegisterService.removeWorkerFromCashRegister(
-                /*badWorker=*/444, register.getNumber(), store
+                444, register.getNumber(), store
         );
         assertEquals(
-                "Worker with Id: 444does not exist!",
+                "Worker with Id: 444 does not exist!",
                 outContent.toString().trim()
         );
     }
 
     @Test
     void removeWorkerFromCashRegister_workerMismatch() {
-        // register has our workerId, but worker.cashRegisterId is different
+
         register.setWorkerId(worker.getWorkerId());
-        worker.setCashRegisterId(/*someOther=*/505);
+        worker.setCashRegisterId(505);
         cashRegisterService.removeWorkerFromCashRegister(
                 worker.getWorkerId(), register.getNumber(), store
         );
@@ -187,7 +187,7 @@ public class CashRegisterServiceTests {
         );
     }
 
-    //–– checkoutCustomers ––//
+
 
     @Test
     void checkoutCustomers_throwsWhenNoWorker() {
@@ -204,7 +204,7 @@ public class CashRegisterServiceTests {
 
     @Test
     void checkoutCustomers_emptyQueueReturnsEmpty() throws NoWorkerException {
-        // assign worker
+
         register.setWorkerId(worker.getWorkerId());
         worker.setCashRegisterId(register.getNumber());
 
@@ -219,25 +219,25 @@ public class CashRegisterServiceTests {
 
     @Test
     void checkoutCustomers_successfulSale() throws NoWorkerException {
-        // assign worker
+
         register.setWorkerId(worker.getWorkerId());
         worker.setCashRegisterId(register.getNumber());
 
-        // add a product that’s in stock and not expired
+
         Product p = new Product(
-                /*id=*/10,
+                10,
                 "Banana",
-                /*fee=*/0.0,
+                0.0,
                 ProductCategory.FOOD,
                 LocalDate.now().plusDays(5),
-                /*price=*/5.0,
-                /*qty=*/50.0
+                5.0,
+               50.0
         );
         storeService.addProducts(store, p);
 
-        // make a cart for 3 bananas at 5.0 each => total 15.0
-        Cart cart = new Cart(/*cartId=*/7, /*money=*/20.0);
-        cart.addItems(new CartItem(/*prodId=*/10, /*qty=*/3.0, /*price=*/5.0));
+
+        Cart cart = new Cart(7, 20.0);
+        cart.addItems(new CartItem(10,3.0, 5.0));
         register.addCustomers(cart);
 
         List<Receipt> receipts = cashRegisterService.checkoutCustomers(
@@ -260,7 +260,7 @@ public class CashRegisterServiceTests {
         register.setWorkerId(worker.getWorkerId());
         worker.setCashRegisterId(register.getNumber());
 
-        // same banana setup
+
         Product p = new Product(
                 20, "Apple", 0.0, ProductCategory.FOOD,
                 LocalDate.now().plusDays(5),
@@ -268,8 +268,8 @@ public class CashRegisterServiceTests {
         );
         storeService.addProducts(store, p);
 
-        Cart cart = new Cart(2, /*only*/ 5.0);
-        cart.addItems(new CartItem(20, 3.0, 3.0)); // wants 3×3.0 = 9.0
+        Cart cart = new Cart(2,  5.0);
+        cart.addItems(new CartItem(20, 3.0, 3.0));
         register.addCustomers(cart);
 
         List<Receipt> receipts = cashRegisterService.checkoutCustomers(

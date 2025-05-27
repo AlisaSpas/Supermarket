@@ -23,7 +23,8 @@ public class CashRegisterService implements ICashRegisterService {
 
     @Override
     public ArrayList<Receipt> checkoutCustomers(LocalDateTime timeOfSale,
-                                                Queue<Cart> customers, Store store, CashRegister cashRegister) throws NoWorkerException {
+                                                Queue<Cart> customers, Store store,
+                                                CashRegister cashRegister) throws NoWorkerException {
         int workerId = cashRegister.getWorkerId();
         if (workerId == 0) {
             throw new NoWorkerException(cashRegister.getNumber());
@@ -32,9 +33,7 @@ public class CashRegisterService implements ICashRegisterService {
         ArrayList<Receipt> receipts = new ArrayList<>();
 
         int receiptId = getReceiptId(store.getId());
-        if (receiptId == 0) {
-            receiptId = 1;
-        }
+        receiptId++;
         while (!customers.isEmpty()) {
             Cart cart = customers.poll();
             ArrayList<CartItem> items = cart.getItems();

@@ -18,7 +18,7 @@ public class SerializationService implements ISerializationService {
             ObjectOutputStream ostream = new ObjectOutputStream(stream)) {
             ostream.writeObject(receipt);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println(e.getMessage());
         }
     }
 
@@ -30,10 +30,8 @@ public class SerializationService implements ISerializationService {
           try(FileInputStream stream = new FileInputStream(file);
               ObjectInputStream istream = new ObjectInputStream(stream)) {
              receipt = (Receipt)istream.readObject();
-          } catch (IOException e) {
-              throw new RuntimeException(e);
-          } catch (ClassNotFoundException e) {
-              throw new RuntimeException(e);
+          } catch (IOException | ClassNotFoundException e) {
+              System.out.println(e.getMessage());
           }
       }
       return receipt;

@@ -18,7 +18,7 @@ public class SerializationServiceTest {
 
     @AfterEach
     void cleanup() {
-        // delete all .ser files under receipts
+
         File d = new File(dir);
         if (d.exists() && d.isDirectory()) {
             for (File f : d.listFiles((_, name) -> name.endsWith(".ser"))) {
